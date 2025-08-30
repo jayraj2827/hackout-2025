@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Coastal Threat Alert System</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+    <!-- Plotly (WebGL 3D) -->
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons" defer></script>
+  </head>
+  <body>
+    <div id="bg-overlay"></div>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <img src="{{ url_for('static', filename='images/earth.jpg') }}" alt="Earth" class="brand-logo"/>
+          <div>
+            <h1>Coastal Threat Alert</h1>
+            <p class="subtitle">Blue Carbon • Live Early Warning Platform</p>
+          </div>
+        </div>
+        <div class="meta">
+          <div class="pill" id="last-updated">—</div>
+          <div class="pill pill-success" id="system-status"><i data-feather="activity"></i><span> Live</span></div>
+        </div>
+      </header>
+
+      <main class="content">
+        {% block content %}{% endblock %}
+      </main>
+
+      <footer class="footer">
+        <span>© {{ 2025 }} Coastal Intelligence | Built with Flask + Plotly</span>
+      </footer>
+    </div>
+
+    <!-- App JS -->
+    <script defer src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  </body>
+</html>

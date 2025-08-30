@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="alerts-bar" id="alerts-bar">
+    <div class="llm-summary" id="llm-summary">Loading live summary…</div>
+    <div class="alerts-pills" id="alerts-pills"></div>
+  </section>
+
+  <section class="grid">
+    <!-- KPI Cards -->
+    <div class="card kpi" id="kpi-total-stations">
+      <div class="kpi-label">Stations</div>
+      <div class="kpi-value" id="kpi-stations-value">—</div>
+      <div class="kpi-mini" id="kpi-critical-count"><i data-feather="alert-triangle"></i> Critical: —</div>
+    </div>
+
+    <div class="card kpi" id="kpi-anomaly-rate">
+      <div class="kpi-label">Anomaly Rate</div>
+      <div class="kpi-value" id="kpi-anomaly-value">—</div>
+      <div class="kpi-mini"><i data-feather="activity"></i> Last 30s</div>
+    </div>
+
+    <div class="card kpi" id="kpi-max-prob">
+      <div class="kpi-label">Max Event Probability</div>
+      <div class="kpi-value" id="kpi-prob-value">—</div>
+      <div class="kpi-mini" id="kpi-prob-station">—</div>
+    </div>
+
+    <div class="card kpi" id="kpi-tide-trend">
+      <div class="kpi-label">Tide Trend</div>
+      <div class="kpi-value" id="kpi-tide-value">—</div>
+      <div class="kpi-mini" id="kpi-tide-station">—</div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="card chart" id="chart-3d-prob">
+      <div class="card-title">3D Risk Landscape — Lat/Lon vs Event Probability</div>
+      <div id="plot-risk-3d" class="plot"></div>
+    </div>
+
+    <div class="card chart" id="chart-3d-bubbles">
+      <div class="card-title">3D Eco-Metric Bubbles — Chlorophyll vs Temp vs Wind</div>
+      <div id="plot-eco-3d" class="plot"></div>
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="card chart" id="chart-3d-bars">
+      <div class="card-title">3D Bars — Event Probability by Station</div>
+      <div id="plot-bars-3d" class="plot"></div>
+    </div>
+
+    <div class="card chart" id="chart-3d-tide">
+      <div class="card-title">3D Tide Surface — Station × Time × Tide</div>
+      <div id="plot-tide-3d" class="plot"></div>
+    </div>
+
+    <!-- Table -->
+    <div class="card table" id="table-alerts">
+      <div class="card-title">Live Station Status</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Station</th>
+            <th>Prob</th>
+            <th>Anomaly</th>
+            <th>Critical</th>
+            <th>Chl</th>
+            <th>NDVI</th>
+            <th>Tide</th>
+            <th>Trend</th>
+            <th>Temp (°C)</th>
+            <th>Wind</th>
+            <th>Rain</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="alerts-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}
