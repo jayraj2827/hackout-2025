@@ -7,8 +7,16 @@ import ee
 PROJECT_ROOT = Path(__file__).resolve().parent
 TEMPLATES_DIR = PROJECT_ROOT / "flask_app" / "templates"
 STATIC_DIR = PROJECT_ROOT / "flask_app" / "static"
+from dotenv import load_dotenv
 
-ee.Initialize(project='verdant-nova-470617-v8')
+PROJECT=""
+def load_env():
+    global PROJECT
+    load_dotenv()
+    PROJECT=os.getenv("PROJECT")
+    
+load_env()
+ee.Initialize(project=PROJECT)
 # Ensure project root is on sys.path so "ml_Files" package imports work
 sys.path.insert(0, str(PROJECT_ROOT))
 

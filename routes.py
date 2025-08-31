@@ -6,15 +6,16 @@ import mysql.connector
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
+from dotenv import load_dotenv
 # Make sure project root is available for importing ml_Files
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 bp = Blueprint("routes", __name__)
 
-SENDER_EMAIL = "friday.desktop.ai@gmail.com"
-PASSWORD = "venq nbfo xgvj uixb"
+load_dotenv()
+SENDER_EMAIL = os.getenv("SENDER_EMAIL")
+PASSWORD = os.getenv("PASSWORD")
 
 def get_db_connection():
     conn = mysql.connector.connect(
