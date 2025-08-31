@@ -1,81 +1,134 @@
-{% extends 'base.html' %}
+  {% extends 'base.html' %}
 
-{% block content %}
-  <section class="alerts-bar" id="alerts-bar">
-    <div class="llm-summary" id="llm-summary">Loading live summary…</div>
-    <div class="alerts-pills" id="alerts-pills"></div>
-  </section>
+  {% block content %}
+    <section class="alerts-bar" id="alerts-bar">
+      <div class="llm-summary" id="llm-summary">Loading live summary…</div>
+      <div class="alerts-pills" id="alerts-pills">
+        <!-- <div class="alert-pill" style="padding:0; margin:0;">
+          <div class="alert-card" style="width:120px; padding:6px;">
+            <form action="{{ url_for('routes.send_alert') }}" method="post">
+              <button type="submit" class="btn btn-danger btn-sm" style="width:100%; font-size:12px;">🚨 High Alert</button>
+            </form>
+          </div>
+        </div> -->
+        <div class="alert-pill high-alert-pill critical pulse">
+          <form class="high-alert-form" action="/send_alert" method="post" style="display:flex; gap:10px; width:100%;">
+            <button type="submit" class="high-alert-send" id="high-send">
+              <span class="icon">🚨</span>
+              <span class="label">Send High Alert</span>
+            </button>
+            <div class="high-alert-meta" title="Triggered by: Chennai, Puri">Chennai • 99.3%</div>
+          </form>
+        </div>
+        
+      </div>
+    </section>
 
-  <section class="grid">
-    <!-- KPI Cards -->
-    <div class="card kpi" id="kpi-total-stations">
-      <div class="kpi-label">Stations</div>
-      <div class="kpi-value" id="kpi-stations-value">—</div>
-      <div class="kpi-mini" id="kpi-critical-count"><i data-feather="alert-triangle"></i> Critical: —</div>
-    </div>
 
-    <div class="card kpi" id="kpi-anomaly-rate">
-      <div class="kpi-label">Anomaly Rate</div>
-      <div class="kpi-value" id="kpi-anomaly-value">—</div>
-      <div class="kpi-mini"><i data-feather="activity"></i> Last 30s</div>
-    </div>
+    
+    <section class="grid">
+      <!-- KPI Cards -->
+      <div class="card kpi" id="kpi-total-stations">
+        <div class="kpi-label">Stations</div>
+        <div class="kpi-value" id="kpi-stations-value">—</div>
+        <div class="kpi-mini" id="kpi-critical-count"><i data-feather="alert-triangle"></i> Critical: —</div>
+      </div>
 
-    <div class="card kpi" id="kpi-max-prob">
-      <div class="kpi-label">Max Event Probability</div>
-      <div class="kpi-value" id="kpi-prob-value">—</div>
-      <div class="kpi-mini" id="kpi-prob-station">—</div>
-    </div>
+      <div class="card kpi" id="kpi-anomaly-rate">
+        <div class="kpi-label">Anomaly Rate</div>
+        <div class="kpi-value" id="kpi-anomaly-value">—</div>
+        <div class="kpi-mini"><i data-feather="activity"></i> Last 30s</div>
+      </div>
 
-    <div class="card kpi" id="kpi-tide-trend">
-      <div class="kpi-label">Tide Trend</div>
-      <div class="kpi-value" id="kpi-tide-value">—</div>
-      <div class="kpi-mini" id="kpi-tide-station">—</div>
-    </div>
+      <div class="card kpi" id="kpi-max-prob">
+        <div class="kpi-label">Max Event Probability</div>
+        <div class="kpi-value" id="kpi-prob-value">—</div>
+        <div class="kpi-mini" id="kpi-prob-station">—</div>
+      </div>
 
-    <!-- Charts Row 1 -->
-    <div class="card chart" id="chart-3d-prob">
-      <div class="card-title">3D Risk Landscape — Lat/Lon vs Event Probability</div>
-      <div id="plot-risk-3d" class="plot"></div>
-    </div>
+      <div class="card kpi" id="kpi-tide-trend">
+        <div class="kpi-label">Tide Trend</div>
+        <div class="kpi-value" id="kpi-tide-value">—</div>
+        <div class="kpi-mini" id="kpi-tide-station">—</div>
+      </div>
 
-    <div class="card chart" id="chart-3d-bubbles">
-      <div class="card-title">3D Eco-Metric Bubbles — Chlorophyll vs Temp vs Wind</div>
-      <div id="plot-eco-3d" class="plot"></div>
-    </div>
+      <!-- Charts Row 1 -->
+      <div class="card chart" id="chart-3d-prob">
+        <div class="card-title">3D Risk Landscape — Lat/Lon vs Event Probability</div>
+        <div id="plot-risk-3d" class="plot"></div>
+      </div>
 
-    <!-- Charts Row 2 -->
-    <div class="card chart" id="chart-3d-bars">
-      <div class="card-title">3D Bars — Event Probability by Station</div>
-      <div id="plot-bars-3d" class="plot"></div>
-    </div>
+      <div class="card chart" id="chart-3d-bubbles">
+        <div class="card-title">3D Eco-Metric Bubbles — Chlorophyll vs Temp vs Wind</div>
+        <div id="plot-eco-3d" class="plot"></div>
+      </div>
 
-    <div class="card chart" id="chart-3d-tide">
-      <div class="card-title">3D Tide Surface — Station × Time × Tide</div>
-      <div id="plot-tide-3d" class="plot"></div>
-    </div>
+      <!-- Charts Row 2 -->
+      <div class="card chart" id="chart-3d-bars">
+        <div class="card-title">3D Bars — Event Probability by Station</div>
+        <div id="plot-bars-3d" class="plot"></div>
+      </div>
 
-    <!-- Table -->
-    <div class="card table" id="table-alerts">
-      <div class="card-title">Live Station Status</div>
-      <table>
-        <thead>
-          <tr>
-            <th>Station</th>
-            <th>Prob</th>
-            <th>Anomaly</th>
-            <th>Critical</th>
-            <th>Chl</th>
-            <th>NDVI</th>
-            <th>Tide</th>
-            <th>Trend</th>
-            <th>Temp (°C)</th>
-            <th>Wind</th>
-            <th>Rain</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody id="alerts-tbody"></tbody>
-      </table>
-    </div>
-  </section>
-{% endblock %}
+      <div class="card chart" id="chart-3d-tide">
+        <div class="card-title">3D Tide Surface — Station × Time × Tide</div>
+        <div id="plot-tide-3d" class="plot"></div>
+      </div>
+
+        <!-- <div class="card">
+            <h3>🌍 Satellite Map</h3>
+            <div id="satelliteMap" style="height: 400px; width: 100%; border-radius: 12px;"></div>
+          </div> -->
+          <div class="card" id="card-satellite">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+              <h3 style="margin:0">🌍 Satellite Map</h3>
+              <div class="map-controls" role="toolbar" aria-label="Map controls">
+                <button class="map-btn" id="btn-refresh-tiles" title="Reload satellite/NDVI tiles">🔄 Refresh</button>
+                <button class="map-btn" id="btn-toggle-ndvi" title="Toggle NDVI/Imagery layer">🗺️ Toggle NDVI</button>
+                <button class="map-btn" id="btn-snapshot" title="Create map snapshot">📸 Snapshot</button>
+              </div>
+            </div>
+          
+            <p class="map-desc">
+              Live satellite + station overlay. Circle size indicates event probability; pulsing red markers show critical alerts.
+              Click a marker for latest station metrics. Use controls to refresh imagery or toggle the NDVI layer.
+            </p>
+          
+            <div id="satelliteMap" style="height: 400px; width: 100%; border-radius: 12px;"></div>
+          
+            <div class="map-footer" style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+              <div class="map-legend">
+                <span class="legend-item"><span class="legend-dot" style="background:#ff4d4f"></span> Critical</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#ff8a4d"></span> High</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#ffd166"></span> Moderate</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#6ee7ff"></span> Low</span>
+              </div>
+              <div class="map-meta">Last map update: <span id="map-last-updated">—</span></div>
+            </div>
+          </div>
+          
+        
+      <!-- Table -->
+      <div class="card table" id="table-alerts">
+        <div class="card-title">Live Station Status</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Station</th>
+              <th>Prob</th>
+              <th>Anomaly</th>
+              <th>Critical</th>
+              <th>Chl</th>
+              <th>NDVI</th>
+              <th>Tide</th>
+              <th>Trend</th>
+              <th>Temp (°C)</th>
+              <th>Wind</th>
+              <th>Rain</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="alerts-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  {% endblock %}

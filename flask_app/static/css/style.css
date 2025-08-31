@@ -60,7 +60,7 @@
   .kpi-value { font-size: 28px; font-weight: 800; letter-spacing: 0.3px; }
   .kpi-mini { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
   
-  .plot { width: 100%; height: 360px; }
+  .plot { width: 100%; height: 360px; background-color: transparent;}
   
   /* Table */
   .table table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -84,4 +84,173 @@
     .card, .card.kpi, .card.table { grid-column: span 2; }
     .plot { height: 300px; }
   }
-  
+  /* ---------- High Alert pill (full-row) ---------- */
+.alerts-pills {
+  display: flex;          /* already set in your file, but needed for behavior below */
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* Make the high-alert pill take the full row (stretch to container width) */
+.high-alert-pill {
+  flex: 1 1 100%;               /* full row */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,100,130,0.22);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(255,255,255,0.02);
+  backdrop-filter: blur(6px);
+}
+
+/* soft critical tint when critical */
+.high-alert-pill.critical {
+  background: linear-gradient(180deg, rgba(255,100,130,0.06), rgba(255,100,130,0.01));
+  border-color: rgba(255,100,130,0.36);
+}
+
+/* pulse glow for attention (toggle class .pulse for animation) */
+@keyframes pulseGlow {
+  0%   { box-shadow: 0 6px 18px rgba(255,70,110,0.06); }
+  50%  { box-shadow: 0 14px 44px rgba(255,70,110,0.12); transform: translateY(-2px); }
+  100% { box-shadow: 0 6px 18px rgba(255,70,110,0.06); transform: translateY(0); }
+}
+.high-alert-pill.pulse {
+  animation: pulseGlow 2.2s ease-in-out infinite;
+}
+
+/* ---------- Send button (fills the pill) ---------- */
+.high-alert-send {
+  flex: 1 1 auto;       /* grow to fill available space */
+  width: 100%;          /* ensure full width inside form */
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(90deg, #ff6b81 0%, #ff3b69 100%);
+  box-shadow: 0 8px 30px rgba(255,59,105,0.14), 0 2px 6px rgba(0,0,0,0.45);
+  transition: transform .14s ease, box-shadow .14s ease, opacity .14s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* icon and label spacing if used */
+.high-alert-send .icon {
+  display: inline-block;
+  transform: translateY(-1px);
+}
+
+/* hover / active */
+.high-alert-send:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(255,59,105,0.18);
+}
+.high-alert-send:active {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(255,59,105,0.12);
+}
+
+/* sending / disabled state */
+.high-alert-send.sending,
+.high-alert-send[disabled] {
+  opacity: 0.92;
+  cursor: progress;
+  background: linear-gradient(90deg, #ffd1da 0%, #ff8aa0 100%);
+  box-shadow: none;
+}
+
+/* small meta next to the button (station names / tooltip) */
+.high-alert-meta {
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--muted);
+  padding-left: 8px;
+  opacity: 0.95;
+}
+
+/* responsive: ensure full width on narrow screens */
+@media (max-width: 720px) {
+  .high-alert-pill { flex-basis: 100%; }
+  .high-alert-meta { display: none; } /* hide meta on tiny widths if space is tight */
+}
+/* Pulsing / badge style for critical marker (used with DivIcon) */
+.leaflet-div-icon.pulse-marker {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  transform: translate(-9px, -9px);
+}
+.pulse-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff4d4f; /* danger red */
+  box-shadow: 0 0 8px rgba(255,77,79,0.45);
+  position: absolute;
+  left: 3px; top: 3px;
+}
+.pulse-ring {
+  position: absolute;
+  left: -6px; top: -6px;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(255,77,79,0.12);
+  animation: pulse 1.6s ease-out infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(0.7); opacity: 0.7; }
+  70% { transform: scale(1.8); opacity: 0; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* small popup table style */
+.leaflet-popup-content .station-mini { font-size:13px; line-height:1.3; }
+.leaflet-popup-content .station-mini b { color: #fff; font-weight:700; }
+.leaflet-popup-content .station-mini .muted { color: var(--muted); font-weight:600; font-size:12px; display:block; margin-top:6px; }
+
+/* map card extras */
+#card-satellite .map-desc {
+  margin: 8px 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* map buttons */
+.map-controls { display:flex; gap:8px; }
+.map-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--text);
+  padding: 6px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.map-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.25); }
+.map-btn:active { transform: translateY(0); }
+
+/* legend */
+.map-legend { display:flex; gap:12px; align-items:center; font-size:13px; color:var(--muted); }
+.legend-item { display:flex; gap:8px; align-items:center; }
+.legend-dot { width:12px; height:12px; border-radius:50%; display:inline-block; box-shadow:0 2px 6px rgba(0,0,0,0.35); }
+
+/* small footer meta */
+.map-meta { color:var(--muted); font-size:13px; }
+
+/* responsive tweak */
+@media (max-width:720px) {
+  .map-controls { gap:6px; }
+  .map-btn { padding:6px; font-size:12px; }
+  .map-desc { font-size:12px; }
+}

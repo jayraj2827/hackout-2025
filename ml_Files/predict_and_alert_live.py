@@ -207,6 +207,8 @@ import pickle
 import random
 import time
 import json
+import ollama
+from groq import Groq
 import os
 import glob
 import google.generativeai as genai
@@ -224,6 +226,9 @@ os.makedirs(DATA_DIR, exist_ok=True)
 LOG_FILE = os.path.join(DATA_DIR, "live_data_log.csv")
 HIST_FILE = os.path.join(DATA_DIR, "preprocessed_data.csv")
 
+client = Groq(
+    api_key="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"
+)
 # -------------------------------
 # Configuration
 # -------------------------------
@@ -237,7 +242,7 @@ STATIONS = {
     "Goa": "Goa,IN"
 }
 
-SYSTEM_PROMPT = f"You are a coastal monitoring assistant. Provide concise, actionable insights based on live sensor alerts and forecasts.***Note: Always give short response Current time: {time.time()}"
+SYSTEM_PROMPT = f"You are a smart sumarizer agent who sumarize the json data of the 5-6 cities in 2 lines only mentioned now youhave to sumarize smartly then tell me that which resgion is at high risk  ,dont act like a 4rd agent act like you are  analyzing and in Human response [Strictly Dont sumarize detail in more than 2 lines].Current time: {time.time()}"
 ALERT_TIDE = 3.5
 ALERT_EVENT_PROB = 0.5
 SEQ_LENGTH = 7
@@ -256,12 +261,6 @@ for file in glob.glob(os.path.join(ANOMALY_MODEL_DIR, "*.pkl")):
     ANOMALY_MODELS[station_name] = pickle.load(open(file, "rb"))
 print("Loaded anomaly models for stations:", list(ANOMALY_MODELS.keys()))
 
-# -------------------------------
-# Gemini LLM
-# -------------------------------
-API_KEY_GENAI = "AIzaSyC8NeQ8wZj7APFdi0hBgZDE3ujok34Yszo"
-genai.configure(api_key=API_KEY_GENAI)
-client = genai.GenerativeModel("gemini-2.0-flash")
 
 # -------------------------------
 # Functions
@@ -283,23 +282,27 @@ def simulate_satellite_features():
     chlorophyll = round(random.uniform(1, 5), 2)
     return ndvi, chlorophyll
 
-def generate_insight_gemini(alerts_json):
+def generate_insight_ollama(alerts_json):
     try:
         prompt_text = SYSTEM_PROMPT.format(datetime.now()) + "\n\n" + json.dumps(alerts_json, indent=2)
-        response = client.generate_content(
-            contents=[{"role":"user","parts":[prompt_text]}],
-            generation_config={
-                "temperature": 0.7,
-                "top_k": 20,
-                "top_p": 0.85,
-                "max_output_tokens": 300
-            },
-            stream=False
+        chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": prompt_text,
+            }
+        ],
+        model="llama-3.1-8b-instant",
+        stream=False,
         )
-        return response.text
+
+        return chat_completion.choices[0].message.content
+
+
     except Exception as e:
-        print("Gemini LLM Failed:", e)
+        print("Ollama LLM Failed:", e)
         return "LLM summary unavailable."
+
 
 def run_live_alert():
     live_records = []
@@ -414,7 +417,7 @@ def run_live_alert():
     df_all_live = pd.concat(live_records, ignore_index=True)
     df_all_live.to_csv(LOG_FILE, mode='a', index=False, header=not os.path.exists(LOG_FILE))
     
-    llm_summary = generate_insight_gemini(output_json)
+    llm_summary = generate_insight_ollama(output_json)
     
     return {
         "alerts": output_json,

@@ -3,6 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='image/faviconFile.ico') }}">
+
     <title>Coastal Threat Alert System</title>
 
     <!-- Fonts -->
@@ -24,7 +26,7 @@
     <div class="page">
       <header class="topbar">
         <div class="brand">
-          <img src="{{ url_for('static', filename='images/earth.jpg') }}" alt="Earth" class="brand-logo"/>
+          <img src="{{ url_for('static', filename='image/earth.jpg') }}" alt="Earth" class="brand-logo"/>
           <div>
             <h1>Coastal Threat Alert</h1>
             <p class="subtitle">Blue Carbon • Live Early Warning Platform</p>
@@ -44,6 +46,8 @@
         <span>© {{ 2025 }} Coastal Intelligence | Built with Flask + Plotly</span>
       </footer>
     </div>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <!-- App JS -->
     <script defer src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
